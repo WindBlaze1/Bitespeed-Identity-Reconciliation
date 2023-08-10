@@ -12,9 +12,9 @@ class SQLite:
     def run_query(self, query, params=None):
         cursor = self.conn.cursor()
         if params:
-            cursor.execute(query, params)
+            cursor.executescript(query, params)
         else:
-            cursor.execute(query)
+            cursor.executescript(query)
         self.conn.commit()
         return cursor.fetchall()
 
