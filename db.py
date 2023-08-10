@@ -1,6 +1,8 @@
+""" Using sqlite3 to make a db """
 import sqlite3
 
 class SQLite:
+    """ wrapper class to ease the use of db """
     def __init__(self, db_name):
         self.db_name = db_name
         self.conn = self._initialize_database()
@@ -10,14 +12,17 @@ class SQLite:
         return conn
 
     def run_query(self, query, params=None):
+        """ wrapper for running query on table """
         cursor = self.conn.cursor()
         if params:
-            cursor.executescript(query, params)
+            cursor.execute(query, params)
         else:
-            cursor.executescript(query)
+            cursor.execute(query)
         self.conn.commit()
-        return cursor.fetchall()
+        res = cursor.fetchall()
+        return res
 
     def close_connection(self):
+        """ close connection to db """
         self.conn.close()
 

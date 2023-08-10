@@ -3,7 +3,7 @@ from db import SQLite
 db = SQLite('test_data.sqlite3')
 
 print(db.run_query("CREATE TABLE contacts (\
-    id INT AUTO_INCREMENT PRIMARY KEY,\
+    id INTEGER PRIMARY KEY AUTOINCREMENT,\
     phoneNumber VARCHAR(255),\
     email VARCHAR(255),\
     linkedId INT,\
@@ -26,6 +26,6 @@ insert_queries = [
 for query in insert_queries:
     db.run_query(query)
 
-print(db.run_query("SELECT * FROM contacts;"))
+print(db.run_query("SELECT * FROM contacts"))
 
 db.close_connection()
