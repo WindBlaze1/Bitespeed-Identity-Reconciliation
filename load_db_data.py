@@ -7,7 +7,7 @@ print(db.run_query("CREATE TABLE contacts (\
     phoneNumber VARCHAR(255),\
     email VARCHAR(255),\
     linkedId INT,\
-    linkPrecedence VARCHAR(255),\
+    linkPrecedence TEXT CHECK(linkPrecedence IN ('primary', 'secondary')),\
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,\
     updatedAt DATETIME,\
     deletedAt DATETIME);\
