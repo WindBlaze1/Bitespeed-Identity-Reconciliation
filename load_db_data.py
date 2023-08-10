@@ -1,3 +1,4 @@
+""" import our custom class for making db """
 from db import SQLite
 
 db = SQLite('test_data.sqlite3')
@@ -14,8 +15,8 @@ print(db.run_query("CREATE TABLE contacts (\
     "))
 
 insert_queries = [
-    "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES\
-          ('123456', 'lorraine@hillvalley.edu', NULL, 'primary');",
+    "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES \
+        ('123456', 'lorraine@hillvalley.edu', NULL, 'primary');",
     "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES \
         ('123456', 'mcfly@hillvalley.edu', 1, 'secondary');",
     "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES \

@@ -1,0 +1,5 @@
+# .gitignore
+venv/
+test_data
+test_data.sqlite3
+__pycache__/

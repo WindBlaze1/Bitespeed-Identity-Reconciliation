@@ -1,4 +1,4 @@
-""" Using sqlite3 to make a db """
+""" import python's sqlite to wrap it in a class """
 import sqlite3
 
 class SQLite:
@@ -25,4 +25,3 @@ class SQLite:
     def close_connection(self):
         """ close connection to db """
         self.conn.close()
-
