@@ -17,6 +17,6 @@ requests_ = [
 ]
 
 for data in requests_:
-    res = req.post('http://127.0.0.1:8000/identify',json=data)
-    print('data:','\n',data,'result:',res,res.text,'\n')
+    res = req.post('https://bitespeed-assignment-harit.onrender.com/identify',json=data)
+    print('data:',data,'\n','result:',res,res.text,'\n')
     input('press ENTER to continue')
