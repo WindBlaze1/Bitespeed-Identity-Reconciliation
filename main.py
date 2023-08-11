@@ -1,6 +1,7 @@
 """ imports """
 from email.utils import parseaddr
 from fastapi import FastAPI, HTTPException
+from model import ContactResponse, ContactInfo
 from db import SQLite
 
 def is_valid_email(email):
@@ -13,7 +14,7 @@ def is_valid_email(email):
 
 app = FastAPI()
 
-def get_return_data(lst: list) -> dict | HTTPException:
+def get_return_data(lst: list) -> ContactResponse | HTTPException:
     """ function to parse the table data according to assignment's response """
 
     if len(lst) == 0:
@@ -36,19 +37,19 @@ def get_return_data(lst: list) -> dict | HTTPException:
         if item[2] not in email_list:
             email_list.append(item[2])
 
-    return {
-        'contact':{
-            "primaryContactId": primary_id,
-			"emails": email_list,
-			"phoneNumbers": phone_list,
-			"secondaryContactIds": secondary_id_list,
-        }
-    }
+    return ContactResponse(
+        contact=ContactInfo(
+            primaryContactId=primary_id,
+            emails=email_list,
+            phoneNumbers=phone_list,
+            secondaryContactIds=secondary_id_list
+        )
+    )
 
 
-@app.get('/identify')
-def root(email: str | None = None, phoneNumber : int | None = None):
-    """ Main function containing the functional implementation """
+@app.get('/identify', response_model=ContactResponse)
+def root(email: str | None = None, phoneNumber : int | None = None) -> HTTPException:
+    """ Main function containing the whole functional implementation """
     db = SQLite('test_data.sqlite3')
 
     if email and not is_valid_email(email):
