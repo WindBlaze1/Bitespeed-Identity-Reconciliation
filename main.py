@@ -47,7 +47,7 @@ def get_return_data(lst: list) -> ContactResponse | HTTPException:
     )
 
 
-@app.get('/identify', response_model=ContactResponse)
+@app.post('/identify', response_model=ContactResponse)
 def root(email: str | None = None, phoneNumber : int | None = None) -> HTTPException:
     """ Main function containing the whole functional implementation """
     db = SQLite('test_data.sqlite3')
