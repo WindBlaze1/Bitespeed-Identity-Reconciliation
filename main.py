@@ -1,7 +1,7 @@
 """ imports """
 from email.utils import parseaddr
 from fastapi import FastAPI, HTTPException
-from model import ContactResponse, ContactInfo
+from model import ContactResponse, ContactInfo, Data
 from db import SQLite
 
 def is_valid_email(email):
@@ -18,7 +18,7 @@ def get_return_data(lst: list) -> ContactResponse | HTTPException:
     """ function to parse the table data according to assignment's response """
 
     if len(lst) == 0:
-        return HTTPException(status_code=404, detail='entry not found.')
+        raise HTTPException(status_code=404, detail='entry not found.')
     
     if lst[0][4] == 'primary':
         primary_id = lst[0][0]
@@ -48,16 +48,20 @@ def get_return_data(lst: list) -> ContactResponse | HTTPException:
 
 
 @app.post('/identify', response_model=ContactResponse)
-def root(email: str | None = None, phoneNumber : int | None = None) -> HTTPException:
+def root(request: Data):
     """ Main function containing the whole functional implementation """
     db = SQLite('test_data.sqlite3')
-
-    if email and not is_valid_email(email):
-        return HTTPException(status_code=400, detail='invalid email. try again.')
+    email = request.email
+    phoneNumber = request.phoneNumber
+    print('request received with params: ',request)
 
     if email is None and phoneNumber is None:
-        return HTTPException(status_code=400, detail='both email \
+        raise HTTPException(status_code=400, detail='both email \
 and phoneNumber cannot be empty. try again.')
+
+    if email and not is_valid_email(email):
+        raise HTTPException(status_code=400, detail='invalid email. try again.')
+
 
     if email is None or phoneNumber is None:
         # one of the two is none i.e. check for entries in db

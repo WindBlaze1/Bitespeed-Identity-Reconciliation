@@ -11,3 +11,8 @@ class ContactInfo(BaseModel):
 class ContactResponse(BaseModel):
     """ class to define the return type """
     contact: ContactInfo
+
+class Data(BaseModel):
+    """ class to get to post request data """
+    phoneNumber: int | None = None
+    email: str | None = None
