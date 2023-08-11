@@ -87,7 +87,9 @@ and phoneNumber cannot be empty. try again.')
         for entry in email_entry:
             if entry[3] is not None:
                 linked_id = entry[3]
-                break
+            else:
+                linked_id = entry[0]
+            break
         db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
                         VALUES ({phoneNumber},'{email}','{linked_id}','secondary')")
         return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE email='{email}'"))
@@ -97,7 +99,9 @@ and phoneNumber cannot be empty. try again.')
         for entry in phone_entry:
             if entry[3] is not None:
                 linked_id = entry[3]
-                break
+            else:
+                linked_id = entry[0]
+            break
         db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
                         VALUES ({phoneNumber},'{email}','{linked_id}','secondary')")
         return get_return_data(db.run_query(f'SELECT * FROM contacts WHERE phoneNumber={phoneNumber}'))
