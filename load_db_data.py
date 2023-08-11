@@ -9,7 +9,7 @@ print(db.run_query("CREATE TABLE contacts (\
     email VARCHAR(255),\
     linkedId INT,\
     linkPrecedence TEXT CHECK(linkPrecedence IN ('primary', 'secondary')),\
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,\
+    createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,\
     updatedAt DATETIME,\
     deletedAt DATETIME);\
     "))
@@ -22,7 +22,9 @@ insert_queries = [
     "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES \
         ('919191', 'george@hillvalley.edu', NULL, 'primary');",
     "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES \
-        ('717171', 'biffsucks@hillvalley.edu', NULL, 'primary');"
+        ('717171', 'biffsucks@hillvalley.edu', NULL, 'primary');",
+    "INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence) VALUES \
+        ('717173', 'biffsucks@hillvalley.edu', 4, 'secondary');"
 ]
 for query in insert_queries:
     db.run_query(query)
