@@ -73,3 +73,10 @@ To run the application, follow these steps:
    [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 
    This interactive documentation provides details about the endpoints and allows you to send test requests.
+
+
+2. **Run Tests:** Execute the following command to run the tests:
+
+    ```shell
+    $ python tests.py
+    ```
