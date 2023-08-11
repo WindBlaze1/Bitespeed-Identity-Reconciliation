@@ -1,50 +1,10 @@
 """ imports """
-from email.utils import parseaddr
 from fastapi import FastAPI, HTTPException
-from model import ContactResponse, ContactInfo, Data
+from model import ContactResponse, Data
 from db import SQLite
-
-def is_valid_email(email):
-    """ Check validity of the email """
-    try:
-        parseaddr(email)
-        return True
-    except:
-        return False
+from utils import get_return_data,is_valid_email
 
 app = FastAPI()
-
-def get_return_data(lst: list) -> ContactResponse | HTTPException:
-    """ function to parse the table data according to assignment's response """
-
-    if len(lst) == 0:
-        raise HTTPException(status_code=404, detail='entry not found.')
-
-    if lst[0][4] == 'primary':
-        primary_id = lst[0][0]
-    else:
-        primary_id = lst[0][3]
-
-    email_list = []
-    phone_list = []
-    secondary_id_list = []
-
-    for item in lst:
-        if item[4] != 'primary':
-            secondary_id_list.append(item[0])
-        if item[1] not in phone_list:
-            phone_list.append(item[1])
-        if item[2] not in email_list:
-            email_list.append(item[2])
-
-    return ContactResponse(
-        contact=ContactInfo(
-            primaryContactId=primary_id,
-            emails=email_list,
-            phoneNumbers=phone_list,
-            secondaryContactIds=secondary_id_list
-        )
-    )
 
 
 @app.post('/identify', response_model=ContactResponse)
@@ -156,7 +116,3 @@ and phoneNumber cannot be empty. try again.')
                     # change all secondary of the second ID to point to first ID
     linked_id = change_in_id[0][0]
     return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE id={linked_id} OR linkedId={linked_id}"))
-
-    # data = db.run_query('SELECT * FROM contacts')
-    # print(data)
-    # return {'message':'Hello'}
