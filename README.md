@@ -1,4 +1,4 @@
-#  Test Cases
+# FastAPI Application Test Cases
 
 This Readme  provides an overview of the test cases implemented in the FastAPI application. The application offers an endpoint `/identify` for identifying contacts based on email and phone number inputs.
 
