@@ -42,7 +42,8 @@ and phoneNumber cannot be empty. try again.')
         db.run_query(f"INSERT INTO contacts (phoneNumber, email, \
                                     linkedId, linkPrecedence) VALUES ({phoneNumber},\
                                     '{email}',NULL,'primary')")
-        return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE phoneNumber={phoneNumber} OR email='{email}'"))
+        return get_return_data(db.run_query(f"SELECT * FROM contacts \
+                                            WHERE phoneNumber={phoneNumber} OR email='{email}'"))
     # 01: email present but phone is not: make a new secondary entry
     if len(email_entry) and len(phone_entry) == 0:
         # create new entry
@@ -56,7 +57,8 @@ and phoneNumber cannot be empty. try again.')
         print(linked_id)
         db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
                         VALUES ({phoneNumber},'{email}','{linked_id}','secondary')")
-        return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE id={linked_id} OR linkedId={linked_id}"))
+        return get_return_data(db.run_query(f"SELECT * FROM contacts \
+                                            WHERE id={linked_id} OR linkedId={linked_id}"))
     # 10: phone present but email is not: make a new secondary entry
     if len(phone_entry) and len(email_entry) == 0:
         # create new entry[row]
@@ -70,11 +72,13 @@ and phoneNumber cannot be empty. try again.')
         print(linked_id)
         db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
                         VALUES ({phoneNumber},'{email}','{linked_id}','secondary')")
-        return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE id={linked_id} OR linkedId={linked_id}"))
+        return get_return_data(db.run_query(f"SELECT * FROM contacts \
+                                            WHERE id={linked_id} OR linkedId={linked_id}"))
     # elif both found[11], 3 cases:
     print('case 11')
     # Case 1: an entry is already present which contains both:
-    res = db.run_query(f"SELECT * FROM contacts WHERE phoneNumber={phoneNumber} AND email='{email}'")
+    res = db.run_query(f"SELECT * FROM contacts \
+                       WHERE phoneNumber={phoneNumber} AND email='{email}'")
     if len(res) != 0:
         # then update the UpdatedAt value of the row
         res = res[0]
@@ -84,14 +88,16 @@ and phoneNumber cannot be empty. try again.')
             linked_id = res[0]
         db.run_query(f"UPDATE contacts SET updatedAt = DATETIME('now') \
                      WHERE phoneNumber={phoneNumber} AND email='{email}'")
-        return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE id={linked_id} OR linkedId={linked_id}"))
+        return get_return_data(db.run_query(f"SELECT * FROM contacts \
+                                            WHERE id={linked_id} OR linkedId={linked_id}"))
     # Case 2&3: More than 1 entry present:
     # if both found in different rows, merge them
     # check for entries with different linkedId
     # and make them one if there are more than one[ie 2]
     IDs = db.run_query(f"SELECT DISTINCT(linkedId) FROM contacts \
-                       WHERE (phoneNumber={phoneNumber} OR email='{email}') AND linkedId IS NOT NULL")
-                                                                            # Null linkedId is for primary
+                       WHERE (phoneNumber={phoneNumber} \
+                        OR email='{email}') AND linkedId IS NOT NULL")
+                                            # Null linkedId is for primary
     # Case 2: linked id is same for all
     # add the new entry and return
     if len(IDs) == 1:
@@ -115,4 +121,5 @@ and phoneNumber cannot be empty. try again.')
                     WHERE linkedId={change_in_id[1][0]} AND linkPrecedence='secondary'")
                     # change all secondary of the second ID to point to first ID
     linked_id = change_in_id[0][0]
-    return get_return_data(db.run_query(f"SELECT * FROM contacts WHERE id={linked_id} OR linkedId={linked_id}"))
+    return get_return_data(db.run_query(f"SELECT * FROM contacts \
+                                        WHERE id={linked_id} OR linkedId={linked_id}"))

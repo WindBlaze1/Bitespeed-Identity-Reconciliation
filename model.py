@@ -1,8 +1,9 @@
+""" imports """
 from typing import List
 from pydantic import BaseModel
 
 class ContactInfo(BaseModel):
-    """ warpping this around another clas """
+    """ wrapping this around another class """
     primaryContactId: int
     emails: List[str]
     phoneNumbers: List[int]
