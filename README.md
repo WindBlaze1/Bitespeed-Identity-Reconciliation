@@ -1,6 +1,11 @@
-# FastAPI Application Test Cases
+# Identity Reconciliation Test Cases
 
 This Readme  provides an overview of the test cases implemented in the FastAPI application. The application offers an endpoint `/identify` for identifying contacts based on email and phone number inputs.
+
+## The Deployed Application Can be Found Here:
+
+Click [here](https://bitespeed-assignment-harit.onrender.com/docs) to visit the deployed FastAPI application.
+
 
 ## Test Cases
 
