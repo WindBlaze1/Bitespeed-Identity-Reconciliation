@@ -38,7 +38,7 @@ def get_return_data(lst: list) -> dict | HTTPException:
 
     return {
         'contact':{
-            "primaryContatctId": primary_id,
+            "primaryContactId": primary_id,
 			"emails": email_list,
 			"phoneNumbers": phone_list,
 			"secondaryContactIds": secondary_id_list,
@@ -66,11 +66,48 @@ def root(email: str | None = None, phoneNumber : int | None = None) -> dict | HT
         # phoneNumber is None:
         res = db.run_query(f'SELECT * FROM contacts WHERE email={email}')
         return get_return_data(res)
-    else: # if both are not null -> 2 cases:
+    else: # if both are not null -> 4 cases: [00,01,10,11]
         # if one of the entry is found in db: write the other in db and return result
-        # if none found, create a new entry
-        pass
-
+        email_entry = db.run_query(f'SELECT * FROM contacts WHERE email={email}')
+        phone_entry = db.run_query(f'SELECT * FROM contacts WHERE phoneNumber={phoneNumber}')
+        # 00: both not found: create new entry
+        if len(email_entry) == 0 and len(phone_entry) == 0:
+            new_entry = db.run_query(f"INSERT INTO contacts (phoneNumber, email, \
+                                     linkedId, linkPrecedence) VALUES ('{phoneNumber}',\
+                                     '{email}',NULL,'primary')")
+            return get_return_data(db.run_query(f'SELECT * FROM contacts WHERE phoneNumber={phoneNumber}'))
+        if len(email_entry) and len(phone_entry) == 0:
+            # create new entry
+            for entry in email_entry:
+                if entry[3] is not None:
+                    linked_id = entry[3]
+                    break
+            db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
+                         VALUES ('{phoneNumber}','{email}','{linked_id}','secondary')")
+            return get_return_data(db.run_query(f'SELECT * FROM contacts WHERE phoneNumber={phoneNumber}'))
+        elif len(phone_entry) and len(email_entry) == 0:
+            # create new entry
+            for entry in phone_entry:
+                if entry[3] is not None:
+                    linked_id = entry[3]
+                    break
+            db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
+                         VALUES ('{phoneNumber}','{email}','{linked_id}','secondary')")
+            return get_return_data(db.run_query(f'SELECT * FROM contacts WHERE phoneNumber={phoneNumber}'))
+        # else:# if both found, 2 cases:
+        # if both found in different rows, merge them
+        # check for entries with different linkedId 
+        # and make them one if there are more than one
+        IDs = db.run_query(f'SELECT DISTINCT(linkedId) FROM contacts WHERE email={email}')
+        id = str(IDs[0]) + ',' + str(IDs[1])
+        change_in_id = db.run_query(f'SELECT id FROM contacts \
+                                    WHERE id IN [{id}] ORDER BY createdAt')
+        # now change the contents of 2nd ID to the first
+        # as both persons are the same
+        db.run_query(f"UPDATE TABLE contacts SET linkPrecedence='secondary', linkedId={change_in_id[0]}\
+                        WHERE id={change_in_id[1]} AND linkPrecedence='primary'")
+        db.run_query(f"UPDATE TABLE contacts SET linkedId={change_in_id[0]}\
+                        WHERE linkedId={change_in_id[1]} AND linkPrecedence='secondary")
 
     # data = db.run_query('SELECT * FROM contacts')
     # print(data)
