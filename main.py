@@ -107,6 +107,26 @@ and phoneNumber cannot be empty. try again.')
                         VALUES ({phoneNumber},'{email}','{IDs[0][0]}','secondary')")
         return get_return_data(db.run_query(f"SELECT * FROM contacts \
                                             WHERE phoneNumber={phoneNumber} OR email='{email}'"))
+    if len(IDs) == 0:
+        # Case 2.5: when both IDs are primary: 
+        # sort acc. to time 
+        # make 2nd ID secondary, 
+        # add third entry
+        # and return
+        id = db.run_query(f"SELECT id FROM contacts \
+                       WHERE (phoneNumber={phoneNumber} \
+                        OR email='{email}') ORDER BY createdAt LIMIT 1")[0][0]
+        # print(id)
+        db.run_query(f"UPDATE contacts SET linkPrecedence='secondary', linkedId={id}\
+                    WHERE id NOT IN ({id}) AND (phoneNumber={phoneNumber} \
+                        OR email='{email}')")
+        
+        db.run_query(f"INSERT INTO contacts (phoneNumber, email, linkedId, linkPrecedence)\
+                        VALUES ({phoneNumber},'{email}','{id}','secondary')")
+        
+        return get_return_data(db.run_query(f"SELECT * FROM contacts \
+                                            WHERE phoneNumber={phoneNumber} OR email='{email}'"))
+
     # Case 3: linked id is different: need to combine both the results
     #         into the one which was earlier updated
     id = str(IDs[0][0]) + ',' + str(IDs[1][0])
