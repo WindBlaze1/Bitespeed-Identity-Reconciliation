@@ -1,14 +1,12 @@
-from email.utils import parseaddr
 from fastapi import HTTPException
 from model import ContactResponse, ContactInfo
+import re
 
 def is_valid_email(email):
-    """ Check validity of the email """
-    try:
-        parseaddr(email)
+    """ Checking email validity """
+    if re.match(r"[^@]+@[^@]+\.[^@]+", email):
         return True
-    except Exception:
-        return False
+    return False
 
 def get_return_data(lst: list) -> ContactResponse | HTTPException:
     """ function to parse the table data according to assignment's response """
